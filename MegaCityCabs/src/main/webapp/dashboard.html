@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard - Mega City Cabs</title>
+    <link rel="stylesheet" href="CSS/dashboard.css">
+</head>
+<body>
+
+    <header>
+        <nav class="navbar">
+            <div class="logo"><a href="#">Mega City Cabs</a></div>
+            <ul class="nav-links">
+                <li><a href="#" id="homeLink">Home</a></li>
+                <li><a href="#" id="bookRideLink">Book a Ride</a></li>
+                <li><a href="#" id="historyLink">Booking History</a></li>
+                <li><a href="#" id="profileLink">Profile</a></li>
+                <li><a href="#" id="logoutLink" class="logout-link">Logout</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="homeSection" class="dashboard-section active">
+            <h2>Welcome, <span id="customerName">Customer</span>!</h2>
+            <p>Book a ride, check your history, or update your profile.</p>
+        </section>
+
+        <section id="bookRideSection" class="dashboard-section">
+            <h2>Book a Ride</h2>
+            <form id="bookingForm">
+                <label for="pickup">Pickup Location:</label>
+                <input type="text" id="pickup" name="pickup" required>
+
+                <label for="dropoff">Drop-off Location:</label>
+                <input type="text" id="dropoff" name="dropoff" required>
+
+                <button type="submit">Request Ride</button>
+            </form>
+        </section>
+
+        <section id="historySection" class="dashboard-section">
+            <h2>Booking History</h2>
+            <div id="bookingHistory"></div>
+        </section>
+
+        <section id="profileSection" class="dashboard-section">
+            <h2>My Profile</h2>
+            <p><strong>Username:</strong> <span id="profileUsername"></span></p>
+            <p><strong>Email:</strong> <span id="profileEmail"></span></p>
+            <p><strong>Address:</strong> <span id="profileAddress"></span></p>
+            <p><strong>Phone:</strong> <span id="profilePhone"></span></p>
+        </section>
+    </main>
+
+    <script src="JS/dashboard.js"></script>
+
+    <script>
+        // Mobile Navbar Toggle
+        const hamburger = document.querySelector(".hamburger");
+        const navLinks = document.querySelector(".nav-links");
+
+        hamburger.addEventListener("click", () => {
+            navLinks.classList.toggle("active");
+            hamburger.classList.toggle("toggle");
+        });
+    </script>
+
+</body>
+</html>

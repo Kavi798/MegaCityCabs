@@ -10,7 +10,6 @@ import java.util.List;
 
 @Path("drivers")
 public class DriverServices {
-
     private final Gson gson = new Gson();
 
     // Create Driver
@@ -19,16 +18,22 @@ public class DriverServices {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addDriver(String json) {
-        Drivers driver = gson.fromJson(json, Drivers.class);
-        int driverId = DriverOperations.addDriver(driver);
-        if (driverId > 0) {
-            return Response.status(Response.Status.CREATED)
-                    .entity("{\"message\": \"Driver created successfully\", \"id\": " + driverId + "}")
+        try {
+            Drivers driver = gson.fromJson(json, Drivers.class);
+            int driverId = DriverOperations.addDriver(driver);
+            if (driverId > 0) {
+                return Response.status(Response.Status.CREATED)
+                        .entity("{\"message\": \"Driver created successfully\", \"id\": " + driverId + "}")
+                        .build();
+            }
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"message\": \"Failed to create driver\"}")
+                    .build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("{\"message\": \"Invalid request format\"}")
                     .build();
         }
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity("{\"message\": \"Failed to create driver\"}")
-                .build();
     }
 
     // Get All Drivers
@@ -53,7 +58,7 @@ public class DriverServices {
                 .build();
     }
 
-    // Assign Driver to Booking (Based on Date Availability)
+    // Assign Driver to Booking
     @PUT
     @Path("/{driverId}/assignBooking/{bookingId}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -71,5 +76,23 @@ public class DriverServices {
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity("{\"message\": \"Failed to assign driver\"}")
                 .build();
+    }
+
+    // Get Assigned Vehicle for Driver
+    @GET
+    @Path("/{driverId}/vehicle")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getDriverVehicle(@PathParam("driverId") int driverId) {
+        String vehicleDetails = DriverOperations.getDriverVehicleDetails(driverId);
+        return Response.ok(vehicleDetails).build();
+    }
+
+    // Get All Available Drivers
+    @GET
+    @Path("/available")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAvailableDrivers() {
+        List<Drivers> availableDrivers = DriverOperations.getAvailableDrivers();
+        return Response.ok(gson.toJson(availableDrivers)).build();
     }
 }

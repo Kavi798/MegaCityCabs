@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Mega City Cabs</title>
+    <link rel="stylesheet" href="CSS/admin.css">
+</head>
+<body>
+
+    <header>
+        <nav class="navbar">
+            <div class="logo"><a href="#">Admin Panel</a></div>
+            <ul class="nav-links">
+                <li><a href="#" id="dashboardLink">Dashboard</a></li>
+                <li><a href="#" id="manageUsersLink">Manage Users</a></li>
+                <li><a href="#" id="manageBookingsLink">Manage Bookings</a></li>
+                <li><a href="#" id="reportsLink">Reports</a></li>
+                <li><a href="#" id="logoutLink" class="logout-link">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="dashboardSection" class="admin-section active">
+            <h2>Admin Dashboard</h2>
+            <p>View system stats, monitor activity, and manage the system.</p>
+        </section>
+
+        <section id="manageUsersSection" class="admin-section">
+            <h2>Manage Users</h2>
+            <div id="userList"></div>
+        </section>
+
+        <section id="manageBookingsSection" class="admin-section">
+            <h2>Manage Bookings</h2>
+            <div id="bookingList"></div>
+        </section>
+
+        <section id="reportsSection" class="admin-section">
+            <h2>Reports</h2>
+            <p>Generate reports about cab usage and revenue.</p>
+        </section>
+    </main>
+
+    <script src="JS/admin.js"></script>
+
+</body>
+</html>
