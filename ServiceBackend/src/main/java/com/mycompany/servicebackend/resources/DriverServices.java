@@ -3,6 +3,7 @@ package com.mycompany.servicebackend.resources;
 import Driver.Drivers;
 import Driver.DriverOperations;
 import com.google.gson.Gson;
+
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -10,16 +11,20 @@ import java.util.List;
 
 @Path("drivers")
 public class DriverServices {
+
     private final Gson gson = new Gson();
 
-    // Create Driver
     @POST
     @Path("/create")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addDriver(String json) {
         try {
+            System.out.println("Received JSON: " + json); // ✅ Print raw JSON for debug
+
             Drivers driver = gson.fromJson(json, Drivers.class);
+            System.out.println("Mapped Driver Object: " + driver); // ✅ Print parsed object for debug
+
             int driverId = DriverOperations.addDriver(driver);
             if (driverId > 0) {
                 return Response.status(Response.Status.CREATED)
@@ -30,13 +35,14 @@ public class DriverServices {
                     .entity("{\"message\": \"Failed to create driver\"}")
                     .build();
         } catch (Exception e) {
+            e.printStackTrace(); // ✅ See full stack trace
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("{\"message\": \"Invalid request format\"}")
+                    .entity("{\"message\": \"Invalid request format: " + e.getMessage() + "\"}")
                     .build();
         }
     }
 
-    // Get All Drivers
+    // ✅ Get All Drivers
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllDrivers() {
@@ -44,7 +50,7 @@ public class DriverServices {
         return Response.ok(gson.toJson(drivers)).build();
     }
 
-    // Delete Driver
+    // ✅ Delete Driver
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -58,11 +64,13 @@ public class DriverServices {
                 .build();
     }
 
-    // Assign Driver to Booking
+    // ✅ Assign Driver to Booking
     @PUT
     @Path("/{driverId}/assignBooking/{bookingId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response assignDriverToBooking(@PathParam("driverId") int driverId, @PathParam("bookingId") int bookingId, @QueryParam("date") String requestedDate) {
+    public Response assignDriverToBooking(@PathParam("driverId") int driverId,
+            @PathParam("bookingId") int bookingId,
+            @QueryParam("date") String requestedDate) {
         if (requestedDate == null || requestedDate.isEmpty()) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("{\"message\": \"Booking date is required!\"}")
@@ -78,7 +86,8 @@ public class DriverServices {
                 .build();
     }
 
-    // Get Assigned Vehicle for Driver
+    // ❌ Optional: Get Assigned Vehicle for Driver (Commented out if no vehicles)
+    /*
     @GET
     @Path("/{driverId}/vehicle")
     @Produces(MediaType.APPLICATION_JSON)
@@ -86,8 +95,8 @@ public class DriverServices {
         String vehicleDetails = DriverOperations.getDriverVehicleDetails(driverId);
         return Response.ok(vehicleDetails).build();
     }
-
-    // Get All Available Drivers
+     */
+    // ✅ Get All Available Drivers
     @GET
     @Path("/available")
     @Produces(MediaType.APPLICATION_JSON)
@@ -95,4 +104,44 @@ public class DriverServices {
         List<Drivers> availableDrivers = DriverOperations.getAvailableDrivers();
         return Response.ok(gson.toJson(availableDrivers)).build();
     }
+
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getDriverById(@PathParam("id") int id) {
+        Drivers driver = DriverOperations.getDriverById(id);
+        if (driver != null) {
+            return Response.ok(new Gson().toJson(driver)).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("{\"message\":\"Driver not found\"}")
+                    .build();
+        }
+    }
+
+    // ✅ Update Driver
+    @PUT
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateDriver(@PathParam("id") int id, String json) {
+        try {
+            Drivers updatedDriver = gson.fromJson(json, Drivers.class);
+            updatedDriver.setId(id); // Ensure the ID is set correctly
+            boolean updated = DriverOperations.updateDriver(updatedDriver);
+            if (updated) {
+                return Response.ok("{\"message\": \"Driver updated successfully\"}").build();
+            } else {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("{\"message\": \"Driver not found or update failed\"}")
+                        .build();
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // ✅ Debugging
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("{\"message\": \"Invalid request format: " + e.getMessage() + "\"}")
+                    .build();
+        }
+    }
+
 }

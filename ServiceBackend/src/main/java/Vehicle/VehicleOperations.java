@@ -50,23 +50,26 @@ public class VehicleOperations {
         return vehicles;
     }
 
-    // Get All Available Vehicles (Not Assigned to Any Driver)
-    public static List<Vehicles> getAvailableVehicles() {
+    public static List<Vehicles> getAvailableVehiclesByType(String type) {
         List<Vehicles> vehicles = new ArrayList<>();
-        String query = "SELECT * FROM Vehicles WHERE id NOT IN (SELECT vehicle_id FROM Drivers WHERE vehicle_id IS NOT NULL)";
-        try (Connection conn = DBConnection.getConnection(); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
+        String query = "SELECT * FROM Vehicles WHERE type = ? AND status = 'available'";
+
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, type);
+            ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                vehicles.add(new Vehicles(
+                Vehicles vehicle = new Vehicles(
                         rs.getInt("id"),
                         rs.getString("model"),
                         rs.getString("plate_number"),
                         rs.getInt("capacity"),
+                        (Integer) rs.getObject("driver_id"),
                         rs.getString("type"),
                         rs.getString("status")
-                ));
+                );
+                vehicles.add(vehicle);
             }
         } catch (SQLException e) {
-            System.err.println("Error fetching available vehicles: " + e.getMessage());
             e.printStackTrace();
         }
         return vehicles;
@@ -148,5 +151,82 @@ public class VehicleOperations {
             e.printStackTrace();
         }
         return -1;
+    }
+    // ✅ Get All Available Vehicles
+
+    public static List<Vehicles> getAvailableVehicles() {
+        List<Vehicles> vehicles = new ArrayList<>();
+        String query = "SELECT * FROM Vehicles WHERE status = 'available'";
+        try (Connection conn = DBConnection.getConnection(); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
+            while (rs.next()) {
+                vehicles.add(new Vehicles(
+                        rs.getInt("id"),
+                        rs.getString("model"),
+                        rs.getString("plate_number"),
+                        rs.getInt("capacity"),
+                        (Integer) rs.getObject("driver_id"),
+                        rs.getString("type"),
+                        rs.getString("status")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return vehicles;
+    }
+
+    // ✅ Assign Vehicle and Driver to Booking and Set Status (Vehicle -> unavailable, Driver -> busy)
+    public static boolean assignVehicleAndDriverToBooking(int vehicleId, int driverId, int bookingId) {
+        String assignBooking = "UPDATE Bookings SET vehicle_id = ?, driver_id = ?, bstatus = 'accepted' WHERE id = ?";
+        String updateVehicle = "UPDATE Vehicles SET status = 'unavailable', driver_id = ? WHERE id = ?";
+        String updateDriver = "UPDATE Drivers SET dstatus = 'busy' WHERE id = ?";
+
+        try (Connection conn = DBConnection.getConnection()) {
+            conn.setAutoCommit(false); // Transaction Start
+
+            try (PreparedStatement stmtBooking = conn.prepareStatement(assignBooking); PreparedStatement stmtVehicle = conn.prepareStatement(updateVehicle); PreparedStatement stmtDriver = conn.prepareStatement(updateDriver)) {
+
+                stmtBooking.setInt(1, vehicleId);
+                stmtBooking.setInt(2, driverId);
+                stmtBooking.setInt(3, bookingId);
+                stmtBooking.executeUpdate();
+
+                stmtVehicle.setInt(1, driverId);
+                stmtVehicle.setInt(2, vehicleId);
+                stmtVehicle.executeUpdate();
+
+                stmtDriver.setInt(1, driverId);
+                stmtDriver.executeUpdate();
+
+                conn.commit(); // Transaction Commit
+                return true;
+            } catch (SQLException e) {
+                conn.rollback(); // Rollback on Error
+                e.printStackTrace();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // ✅ Update Existing Vehicle
+    public static boolean updateVehicle(int id, Vehicles vehicle) {
+        String query = "UPDATE Vehicles SET model = ?, plate_number = ?, capacity = ?, type = ?, status = ? WHERE id = ?";
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, vehicle.getModel());
+            stmt.setString(2, vehicle.getPlateNumber());
+            stmt.setInt(3, vehicle.getCapacity());
+            stmt.setString(4, vehicle.getType());
+            stmt.setString(5, vehicle.getStatus());
+            stmt.setInt(6, id); // Where condition
+
+            int rowsAffected = stmt.executeUpdate(); // Execute update
+            return rowsAffected > 0; // Return true if at least one row updated
+        } catch (SQLException e) {
+            System.err.println("Error updating vehicle: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false; // Return false if error occurred
     }
 }

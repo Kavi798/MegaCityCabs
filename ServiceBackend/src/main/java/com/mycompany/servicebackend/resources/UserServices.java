@@ -10,6 +10,7 @@ import java.util.List;
 
 @Path("users")
 public class UserServices {
+
     private final Gson gson = new Gson();
 
     // ✅ Register User API
@@ -21,7 +22,7 @@ public class UserServices {
         try {
             Users user = gson.fromJson(json, Users.class);
             int userId = UserOperations.addAccount(user);
-            
+
             if (userId > 0) {
                 return Response.status(Response.Status.CREATED)
                         .entity("{\"message\": \"User created successfully\", \"id\": " + userId + "}")
@@ -95,5 +96,33 @@ public class UserServices {
     @Produces(MediaType.TEXT_PLAIN)
     public Response testEndpoint() {
         return Response.ok("Test endpoint is working!").build();
+    }
+
+    @PUT
+    @Path("/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateUser(@PathParam("id") int id, String json) {
+        try {
+            Users user = gson.fromJson(json, Users.class);
+            user.setId(id); // Ensure ID is set
+
+            // ✅ Debug log for checking received data
+            System.out.println("Updating User: " + user.getId() + ", Role: " + user.getRole() + ", Name: " + user.getName());
+
+            boolean updated = UserOperations.updateUser(user);
+            if (updated) {
+                return Response.ok("{\"message\": \"User updated successfully\"}").build();
+            } else {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("{\"message\": \"User not found or update failed\"}")
+                        .build();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("{\"message\": \"Invalid request format\"}")
+                    .build();
+        }
     }
 }
