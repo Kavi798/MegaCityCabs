@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Manage Vehicles - Mega City Cabs</title>
+        <link rel="stylesheet" href="CSS/admin.css">
+    </head>
+    <body>
+
+        <header>
+            <nav class="navbar">
+                <div class="logo"><a href="admin.html">Mega City Cabs - Admin</a></div>
+                <ul class="nav-links">
+                    <li><a href="admin.html">Home</a></li>
+                    <li><a href="adminManageUsers.html">Manage Users</a></li>
+                    <li><a href="adminManageBooking.html">Manage Bookings</a></li>
+                    <li><a href="adminManageDrivers.html">Manage Drivers</a></li>
+                    <li><a href="adminManageVehicles.html" class="active">Manage Vehicles</a></li>
+                    <li><a href="#">Reports</a></li>
+                    <li><a href="#" id="logoutLink" class="logout-link">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <section class="admin-section">
+                <h2>Manage Vehicles</h2>
+                <button id="addVehicleBtn">Add Vehicle</button>
+
+                <!-- Filter Section -->
+                <div class="filter-container">
+                    <select id="vehicleTypeFilter">
+                        <option value="">All Types</option>
+                        <option value="Sedan">Sedan</option>
+                        <option value="SUV">SUV</option>
+                        <option value="Luxury">Luxury</option>
+                        <option value="Van">Van</option>
+                    </select>
+                    <select id="vehicleStatusFilter">
+                        <option value="">All Status</option>
+                        <option value="available">Available</option>
+                        <option value="unavailable">Unavailable</option>
+                    </select>
+                    <button id="filterVehiclesBtn">Filter</button>
+                    <button id="resetFilterBtn" class="reset-btn">Reset Filter</button>
+                </div>
+
+                <!-- Vehicles Table -->
+                <table id="vehiclesTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Model</th>
+                            <th>Plate Number</th>
+                            <th>Capacity</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Driver</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </section>
+
+            <!-- Vehicle Modal (Add / Edit) -->
+            <div id="vehicleModal" class="modal">
+                <div class="modal-content">
+                    <span id="closeVehicleModal" class="close">&times;</span>
+                    <h2 id="vehicleModalTitle">Add Vehicle</h2>
+                    <div class="modal-form">
+                        <label>Model:</label><input type="text" id="vehicleModel" placeholder="Enter vehicle model" required>
+                        <label>Plate Number:</label><input type="text" id="vehiclePlate" placeholder="ABC-1234" required>
+                        <label>Assign Driver:</label>
+                        <select id="vehicleDriver">
+                            <option value="">None</option>
+                        </select>
+                        <label>Capacity:</label><input type="number" id="vehicleCapacity" min="1" placeholder="Number of seats" required>
+                        <label>Type:</label>
+                        <select id="vehicleType">
+                            <option value="Sedan">Sedan</option>
+                            <option value="SUV">SUV</option>
+                            <option value="Luxury">Luxury</option>
+                            <option value="Van">Van</option>
+                        </select>
+                        <label>Status:</label>
+                        <select id="vehicleStatus">
+                            <option value="available">Available</option>
+                            <option value="unavailable">Unavailable</option>
+                        </select>
+                    </div>
+                    <div class="modal-buttons">
+                        <button id="saveVehicle" class="save-btn">Save</button>
+                        <button id="cancelVehicle" class="cancel-btn">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="JS/admin.js"></script>
+    </body>
+</html>

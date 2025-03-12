@@ -58,9 +58,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     // ✅ Redirect based on user role
                     if (data.role === "cus") {
-                        window.location.href = "dashboard.html"; // Redirect Customers to Dashboard
+                        window.location.href = "/dashboard.html"; // Redirect Customers to Dashboard
                     } else if (data.role === "adm") {
-                        window.location.href = "admin.html"; // Redirect Admins to Admin Panel
+                        window.location.href = "./admin.html"; // Redirect Admins to Admin Panel
                     } else {
                         window.location.href = "index.html"; // Default Redirect (Failsafe)
                     }

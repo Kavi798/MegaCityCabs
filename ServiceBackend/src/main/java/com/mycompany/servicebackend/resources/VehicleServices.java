@@ -111,4 +111,31 @@ public class VehicleServices {
             return Response.status(Response.Status.NOT_FOUND).entity("{\"message\": \"Vehicle not found or update failed.\"}").build();
         }
     }
+
+    // ✅ Get Vehicle By ID (for editing)
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getVehicleById(@PathParam("id") int id) {
+        Vehicles vehicle = VehicleOperations.getVehicleById(id); // You need to implement this method in VehicleOperations
+        if (vehicle != null) {
+            return Response.ok(new Gson().toJson(vehicle)).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("{\"message\":\"Vehicle not found\"}")
+                    .build();
+        }
+    }
+
+    @GET
+    @Path("/search")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response searchVehicles(@QueryParam("type") String type, @QueryParam("status") String status) {
+        List<Vehicles> vehicles = VehicleOperations.searchVehicles(
+                (type != null && !type.isEmpty()) ? type : null,
+                (status != null && !status.isEmpty()) ? status : null,
+                null // Plate number search optional (currently null)
+        );
+        return Response.ok(gson.toJson(vehicles)).build();
+    }
 }

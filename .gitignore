@@ -1,2 +1,20 @@
 /MegaCityCabsBackend/target/
 /ServiceBackend/target/
+
+# Ignore build directories
+target/
+out/
+
+# Ignore IDE related files
+*.class
+*.iml
+.idea/
+*.log
+
+# Ignore OS generated files
+.DS_Store
+Thumbs.db
+
+# Ignore Maven files that should not be committed
+**/target/
+

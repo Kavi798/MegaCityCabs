@@ -6,16 +6,17 @@ public class Vehicles {
     private String model;
     private String plateNumber;
     private int capacity;
-    private Integer driverId; // ✅ Optional driver_id (nullable)
+    private Integer driverId; // Optional
+    private String driverName; // Optional (for display)
     private String type;
     private String status;
 
-    // ✅ Constructors
+    // ✅ Default Constructor
     public Vehicles() {
     }
 
-    // ✅ Full Constructor (with driver_id)
-    public Vehicles(int id, String model, String plateNumber, int capacity, Integer driverId, String type, String status) {
+    // ✅ Full Constructor with driver
+    public Vehicles(int id, String model, String plateNumber, int capacity, Integer driverId, String type, String status, String driverName) {
         this.id = id;
         this.model = model;
         this.plateNumber = plateNumber;
@@ -23,16 +24,7 @@ public class Vehicles {
         this.driverId = driverId;
         this.type = type;
         this.status = status;
-    }
-
-    // ✅ Constructor without driver_id (Optional, for cases without driver assignment)
-    public Vehicles(int id, String model, String plateNumber, int capacity, String type, String status) {
-        this.id = id;
-        this.model = model;
-        this.plateNumber = plateNumber;
-        this.capacity = capacity;
-        this.type = type;
-        this.status = status;
+        this.driverName = driverName;
     }
 
     // ✅ Getters and Setters
@@ -74,6 +66,14 @@ public class Vehicles {
 
     public void setDriverId(Integer driverId) {
         this.driverId = driverId;
+    }
+
+    public String getDriverName() {
+        return driverName;
+    }
+
+    public void setDriverName(String driverName) {
+        this.driverName = driverName;
     }
 
     public String getType() {

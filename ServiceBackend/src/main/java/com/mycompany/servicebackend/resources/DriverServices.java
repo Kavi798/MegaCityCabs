@@ -20,10 +20,10 @@ public class DriverServices {
     @Produces(MediaType.APPLICATION_JSON)
     public Response addDriver(String json) {
         try {
-            System.out.println("Received JSON: " + json); // ✅ Print raw JSON for debug
+            System.out.println("Received JSON: " + json); // ✅ Check raw JSON
 
             Drivers driver = gson.fromJson(json, Drivers.class);
-            System.out.println("Mapped Driver Object: " + driver); // ✅ Print parsed object for debug
+            System.out.println("Parsed Driver Object: " + driver.getdName() + ", " + driver.getLicenseNumber()); // ✅ Debug parsed object
 
             int driverId = DriverOperations.addDriver(driver);
             if (driverId > 0) {
@@ -35,7 +35,7 @@ public class DriverServices {
                     .entity("{\"message\": \"Failed to create driver\"}")
                     .build();
         } catch (Exception e) {
-            e.printStackTrace(); // ✅ See full stack trace
+            e.printStackTrace(); // ✅ Full stack trace
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("{\"message\": \"Invalid request format: " + e.getMessage() + "\"}")
                     .build();
@@ -143,5 +143,7 @@ public class DriverServices {
                     .build();
         }
     }
+
+    
 
 }

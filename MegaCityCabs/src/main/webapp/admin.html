@@ -3,47 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Mega City Cabs</title>
+    <title>Admin Panel - Mega City Cabs</title>
     <link rel="stylesheet" href="CSS/admin.css">
 </head>
 <body>
 
-    <header>
-        <nav class="navbar">
-            <div class="logo"><a href="#">Admin Panel</a></div>
-            <ul class="nav-links">
-                <li><a href="#" id="dashboardLink">Dashboard</a></li>
-                <li><a href="#" id="manageUsersLink">Manage Users</a></li>
-                <li><a href="#" id="manageBookingsLink">Manage Bookings</a></li>
-                <li><a href="#" id="reportsLink">Reports</a></li>
-                <li><a href="#" id="logoutLink" class="logout-link">Logout</a></li>
-            </ul>
-        </nav>
-    </header>
+<header>
+    <nav class="navbar">
+        <div class="logo"><a href="admin.html">Mega City Cabs - Admin</a></div>
+        <ul class="nav-links">
+            <li><a href="admin.html">Home</a></li>
+            <li><a href="adminManageUsers.html">Manage Users</a></li>
+            <li><a href="adminManageBooking.html">Manage Bookings</a></li>
+            <li><a href="adminManageDrivers.html">Manage Drivers</a></li>
+            <li><a href="adminManageVehicles.html">Manage Vehicles</a></li>
+            <li><a href="#">Reports</a></li>
+            <li><a href="#" id="logoutLink" class="logout-link">Logout</a></li>
+        </ul>
+    </nav>
+</header>
 
-    <main>
-        <section id="dashboardSection" class="admin-section active">
-            <h2>Admin Dashboard</h2>
-            <p>View system stats, monitor activity, and manage the system.</p>
-        </section>
+<main>
+    <section id="homeSection" class="admin-section">
+        <h2>Admin Dashboard - Home</h2>
+        <p>Welcome, <span id="adminName"></span>!</p>
+        <p>Select an option from the menu to manage users, bookings, drivers, and vehicles.</p>
+    </section>
 
-        <section id="manageUsersSection" class="admin-section">
-            <h2>Manage Users</h2>
-            <div id="userList"></div>
-        </section>
+    <div class="dashboard-container">
+        <div class="dashboard-cards">
+            <div class="dashboard-card">
+                <h3>Total Bookings</h3>
+                <p id="totalBookings">1</p>
+                <a href="adminManageBooking.html"><button>Manage Bookings</button></a>
+            </div>
+            <div class="dashboard-card">
+                <h3>Available Drivers</h3>
+                <p id="availableDrivers">3</p>
+                <a href="adminManageDrivers.html"><button>Manage Drivers</button></a>
+            </div>
+            <div class="dashboard-card">
+                <h3>Available Vehicles</h3>
+                <p id="availableVehicles">3</p>
+                <a href="adminManageVehicles.html"><button>Manage Vehicles</button></a>
+            </div>
+            <div class="dashboard-card">
+                <h3>Registered Customers</h3>
+                <p id="totalCustomers">1</p>
+                <a href="adminManageUsers.html"><button>Manage Users</button></a>
+            </div>
+        </div>
+    </div>
+</main>
 
-        <section id="manageBookingsSection" class="admin-section">
-            <h2>Manage Bookings</h2>
-            <div id="bookingList"></div>
-        </section>
-
-        <section id="reportsSection" class="admin-section">
-            <h2>Reports</h2>
-            <p>Generate reports about cab usage and revenue.</p>
-        </section>
-    </main>
-
-    <script src="JS/admin.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="JS/admin.js"></script>
 </body>
 </html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Bookings - Mega City Cabs</title>
+    <link rel="stylesheet" href="CSS/admin.css">
+</head>
+<body>
+
+<header>
+    <nav class="navbar">
+        <div class="logo"><a href="admin.html">Mega City Cabs - Admin</a></div>
+        <ul class="nav-links">
+            <li><a href="admin.html">Home</a></li>
+            <li><a href="adminManageUsers.html">Manage Users</a></li>
+            <li><a href="adminManageBooking.html" class="active">Manage Bookings</a></li>
+            <li><a href="adminManageDrivers.html">Manage Drivers</a></li>
+            <li><a href="adminManageVehicles.html">Manage Vehicles</a></li>
+            <li><a href="#">Reports</a></li>
+            <li><a href="#" id="logoutLink" class="logout-link">Logout</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <section class="admin-section">
+        <h2>Manage Bookings</h2>
+        <table id="bookingsTable">
+            <thead>
+                <tr>
+                    <th>Booking ID</th>
+                    <th>Customer Name</th>
+                    <th>Pickup Location</th>
+                    <th>Drop-off Location</th>
+                    <th>Pickup Date</th>
+                    <th>Vehicle Type</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </section>
+</main>
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="JS/admin.js"></script>
+</body>
+</html>

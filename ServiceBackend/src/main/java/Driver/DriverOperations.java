@@ -7,7 +7,7 @@ import java.util.List;
 
 public class DriverOperations {
 
-    public static int addDriver(Drivers driver) {
+ public static int addDriver(Drivers driver) {
         String query = "INSERT INTO Drivers (dName, phone, license_number, nic, dstatus) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -198,4 +198,5 @@ public class DriverOperations {
         }
         return false;
     }
+
 }

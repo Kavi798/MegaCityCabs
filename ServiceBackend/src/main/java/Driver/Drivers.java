@@ -1,27 +1,17 @@
 package Driver;
 
-import com.google.gson.annotations.SerializedName;
-
 public class Drivers {
+
     private int id;
-
-    @SerializedName("dName")
     private String dName;
-
-    @SerializedName("phone")
     private String phone;
-
-    @SerializedName("license_number")
     private String licenseNumber;
-
-    @SerializedName("nic")
     private String nic;
-
-    @SerializedName("dstatus")
     private String dstatus;
 
     // Constructors
-    public Drivers() {}
+    public Drivers() {
+    }
 
     public Drivers(int id, String dName, String phone, String licenseNumber, String nic, String dstatus) {
         this.id = id;

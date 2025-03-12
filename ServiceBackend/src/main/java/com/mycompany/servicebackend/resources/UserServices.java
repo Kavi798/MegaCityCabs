@@ -45,6 +45,20 @@ public class UserServices {
         List<Users> users = UserOperations.getAllAccounts();
         return Response.ok(gson.toJson(users)).build();
     }
+    // ✅ Get Single User by ID
+
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUserById(@PathParam("id") int id) {
+        Users user = UserOperations.getUserById(id);
+        if (user != null) {
+            return Response.ok(new Gson().toJson(user)).build();
+        }
+        return Response.status(Response.Status.NOT_FOUND)
+                .entity("{\"message\": \"User not found\"}")
+                .build();
+    }
 
     // ✅ Delete User
     @DELETE

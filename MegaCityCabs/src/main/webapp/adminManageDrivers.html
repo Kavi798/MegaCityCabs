@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Manage Drivers - Mega City Cabs</title>
+        <link rel="stylesheet" href="CSS/admin.css">
+    </head>
+    <body>
+
+        <header>
+            <nav class="navbar">
+                <div class="logo"><a href="admin.html">Mega City Cabs - Admin</a></div>
+                <ul class="nav-links">
+                    <li><a href="admin.html">Home</a></li>
+                    <li><a href="adminManageUsers.html">Manage Users</a></li>
+                    <li><a href="adminManageBooking.html">Manage Bookings</a></li>
+                    <li><a href="adminManageDrivers.html" class="active">Manage Drivers</a></li>
+                    <li><a href="adminManageVehicles.html">Manage Vehicles</a></li>
+                    <li><a href="#">Reports</a></li>
+                    <li><a href="#" id="logoutLink" class="logout-link">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <section class="admin-section">
+                <h2>Manage Drivers</h2>
+                <button id="addDriverBtn">Add Driver</button>
+                <table id="driversTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>License Number</th>
+                            <th>NIC</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </section>
+
+            <!-- Driver Edit Modal -->
+            <div id="editDriverModal" class="modal">
+                <div class="modal-content">
+                    <span id="closeDriverModal" class="close">&times;</span>
+                    <h2>Edit Driver</h2>
+                    <div class="modal-form">
+                        <label>Name:</label><input type="text" id="editDriverName">
+                        <label>Phone:</label><input type="text" id="editDriverPhone">
+                        <label>License No:</label><input type="text" id="editDriverLicense">
+                        <label>NIC:</label><input type="text" id="editDriverNic">
+                        <label>Status:</label>
+                        <select id="editDriverStatus">
+                            <option value="available">Available</option>
+                            <option value="busy">Busy</option>
+                        </select>
+                    </div>
+                    <div class="modal-buttons">
+                        <button id="saveDriverChanges" class="save-btn">Save Changes</button>
+                        <button id="cancelDriverChanges" class="cancel-btn">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Driver Modal -->
+            <div id="addDriverModal" class="modal">
+                <div class="modal-content">
+                    <span id="closeAddDriverModal" class="close">&times;</span>
+                    <h2>Add Driver</h2>
+                    <div class="modal-form">
+                        <label>Name:</label><input type="text" id="addDriverName">
+                        <label>Phone:</label><input type="text" id="addDriverPhone">
+                        <label>License No:</label><input type="text" id="addDriverLicense">
+                        <label>NIC:</label><input type="text" id="addDriverNic">
+                        <label>Status:</label>
+                        <select id="addDriverStatus">
+                            <option value="available">Available</option>
+                            <option value="busy">Busy</option>
+                        </select>
+                    </div>
+                    <div class="modal-buttons">
+                        <button id="saveAddDriver" class="save-btn">Add Driver</button>
+                        <button id="cancelAddDriver" class="cancel-btn">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="JS/admin.js"></script>
+    </body>
+</html>
