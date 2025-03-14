@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Book a Ride - Mega City Cabs</title>
+        <link rel="stylesheet" href="CSS/dashboard.css"> <!-- Use your existing dashboard.css -->
+    </head>
+    <body>
+
+        <header>
+            <nav class="navbar">
+                <div class="logo"><a href="customerBookingRide.html">Mega City Cabs</a></div>
+                <ul class="nav-links">
+                    <li><a href="dashboard.html" id="homeLink">Home</a></li>
+                    <li><a href="customerBookingRide.html" id="bookRideLink">Book a Ride</a></li>
+                    <li><a href="customerBookingHistory.html" id="historyLink">Booking History</a></li>
+                    <li><a href="customerProfile.html" id="profileLink">Profile</a></li>
+                    <li><a href="#" id="logoutLink" class="logout-link">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <section class="dashboard-section active">
+                <h2>Book a Ride</h2>
+                <form id="bookingForm">
+                    <label for="pickup">Pickup Location:</label>
+                    <input type="text" id="pickup" name="pickup" required>
+
+                    <label for="dropoff">Drop-off Location:</label>
+                    <input type="text" id="dropoff" name="dropoff" required>
+
+                    <label for="pickupDate">Pickup Date:</label>
+                    <input type="date" id="pickupDate" name="pickupDate" required>
+
+                    <label for="vehicleType">Vehicle Type:</label>
+                    <select id="vehicleType" name="vehicleType" required>
+                        <option value="Sedan">Sedan</option>
+                        <option value="SUV">SUV</option>
+                        <option value="Luxury">Luxury</option>
+                        <option value="Van">Van</option>  
+                    </select>
+
+                    <button type="submit">Request Ride</button>
+                </form>
+            </section>
+        </main>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="JS/customer.js"></script> <!-- ✅ One common JS file -->
+    </body>
+</html>

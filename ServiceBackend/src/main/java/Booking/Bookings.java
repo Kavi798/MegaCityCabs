@@ -14,7 +14,7 @@ public class Bookings {
     private double fare;
     private String bstatus;
     private Timestamp createdAt;
-    private Date pickupDate;    // java.sql.Date
+    private String  pickupDate;    // java.sql.Date
     private String vehicleType;
 
     // ✅ Extra fields for Billing
@@ -27,7 +27,7 @@ public class Bookings {
     }
 
     public Bookings(int id, int userId, Integer driverId, Integer vehicleId, String pickupLocation, String dropoffLocation,
-            double fare, String bstatus, Timestamp createdAt, Date pickupDate, String vehicleType) {
+            double fare, String bstatus, Timestamp createdAt, String pickupDate, String vehicleType) {
         this.id = id;
         this.userId = userId;
         this.driverId = driverId;
@@ -138,11 +138,11 @@ public class Bookings {
         this.customerPhone = customerPhone;
     }
 
-    public Date getPickupDate() {
+    public String  getPickupDate() {
         return pickupDate;
     }
 
-    public void setPickupDate(Date pickupDate) {
+    public void setPickupDate(String  pickupDate) {
         this.pickupDate = pickupDate;
     }
 

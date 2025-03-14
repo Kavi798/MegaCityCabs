@@ -11,12 +11,15 @@ public class BookingOperations {
         String query = "INSERT INTO Bookings (user_id, pickup_location, dropoff_location, fare, bstatus, pickup_date, vehicle_type) "
                 + "VALUES (?, ?, ?, ?, 'pending', ?, ?)";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            double fare = calculateFare(booking.getVehicleType()); // ✅ Calculate fare internally
+
             stmt.setInt(1, booking.getUserId());
             stmt.setString(2, booking.getPickupLocation());
             stmt.setString(3, booking.getDropoffLocation());
-            stmt.setDouble(4, booking.getFare());
-            stmt.setDate(5, booking.getPickupDate());
+            stmt.setDouble(4, fare); // ✅ Use calculated fare
+            stmt.setDate(5, Date.valueOf(booking.getPickupDate())); // ✅ Convert String to SQL Date
             stmt.setString(6, booking.getVehicleType());
+
             stmt.executeUpdate();
             ResultSet rs = stmt.getGeneratedKeys();
             if (rs.next()) {
@@ -49,7 +52,7 @@ public class BookingOperations {
                         rs.getDouble("fare"),
                         rs.getString("bstatus"),
                         rs.getTimestamp("created_at"),
-                        rs.getDate("pickup_date"), // ✅
+                        rs.getString("pickup_date"), // ✅
                         rs.getString("vehicle_type") // ✅
                 );
                 booking.setCustomerName(rs.getString("customer_name"));
@@ -113,7 +116,7 @@ public class BookingOperations {
                         rs.getDouble("fare"),
                         rs.getString("bstatus"),
                         rs.getTimestamp("created_at"),
-                        rs.getDate("pickup_date"),
+                        rs.getString("pickup_date"),
                         rs.getString("vehicle_type")
                 );
                 booking.setCustomerName(rs.getString("customer_name"));
@@ -171,6 +174,61 @@ public class BookingOperations {
 
         } catch (SQLException e) {
             System.err.println("Error assigning vehicle: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static List<Bookings> getBookingsByUser(int userId) {
+        List<Bookings> bookings = new ArrayList<>();
+        String query = "SELECT * FROM Bookings WHERE user_id = ? ORDER BY created_at DESC";
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Bookings booking = new Bookings(
+                        rs.getInt("id"),
+                        rs.getInt("user_id"),
+                        (Integer) rs.getObject("driver_id"),
+                        (Integer) rs.getObject("vehicle_id"),
+                        rs.getString("pickup_location"),
+                        rs.getString("dropoff_location"),
+                        rs.getDouble("fare"),
+                        rs.getString("bstatus"),
+                        rs.getTimestamp("created_at"),
+                        rs.getString("pickup_date"),
+                        rs.getString("vehicle_type")
+                );
+                bookings.add(booking);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching user bookings: " + e.getMessage());
+        }
+        return bookings;
+    }
+
+    public static double calculateFare(String vehicleType) {
+        switch (vehicleType.toLowerCase()) {
+            case "sedan":
+                return 200 + (50 * 10); // 10km as default distance
+            case "suv":
+                return 300 + (60 * 10);
+            case "luxury":
+                return 500 + (80 * 10);
+            case "van":
+                return 400 + (70 * 10);
+            default:
+                return 0.0;
+        }
+    }
+
+    public static boolean cancelBooking(int bookingId) {
+        String query = "UPDATE Bookings SET bstatus = 'cancelled' WHERE id = ? AND bstatus = 'pending'";
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, bookingId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Error cancelling booking: " + e.getMessage());
             e.printStackTrace();
         }
         return false;

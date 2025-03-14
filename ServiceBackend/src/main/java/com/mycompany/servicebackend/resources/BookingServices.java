@@ -116,4 +116,25 @@ public class BookingServices {
             return Response.status(Response.Status.BAD_REQUEST).entity("{\"message\": \"Invalid request format!\"}").build();
         }
     }
+
+    @GET
+    @Path("/history/{userId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getBookingsByUser(@PathParam("userId") int userId) {
+        List<Bookings> bookings = BookingOperations.getBookingsByUser(userId);
+        return Response.ok(gson.toJson(bookings)).build();
+    }
+
+    @PUT
+    @Path("/cancel/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response cancelBooking(@PathParam("id") int id) {
+        boolean cancelled = BookingOperations.cancelBooking(id);
+        if (cancelled) {
+            return Response.ok("{\"message\": \"Booking cancelled successfully\"}").build();
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("{\"message\": \"Booking not found or cannot be cancelled\"}").build();
+        }
+    }
 }
