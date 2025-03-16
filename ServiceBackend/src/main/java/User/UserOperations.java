@@ -24,7 +24,9 @@ public class UserOperations {
 
     // ✅ Create - Add New User
     public static int addAccount(Users user) {
-        if (encoder == null) throw new IllegalStateException("BCryptPasswordEncoder not initialized!");
+        if (encoder == null) {
+            throw new IllegalStateException("BCryptPasswordEncoder not initialized!");
+        }
 
         String query = "INSERT INTO Users (email, username, password, role, name, address, phone, nic) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
@@ -39,10 +41,14 @@ public class UserOperations {
             stmt.setString(8, user.getNic());
 
             int affectedRows = stmt.executeUpdate();
-            if (affectedRows == 0) throw new SQLException("User creation failed, no rows affected.");
+            if (affectedRows == 0) {
+                throw new SQLException("User creation failed, no rows affected.");
+            }
 
             ResultSet rs = stmt.getGeneratedKeys();
-            if (rs.next()) return rs.getInt(1);
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -113,7 +119,9 @@ public class UserOperations {
 
     // ✅ Validate Login
     public static Users validateLogin(String email, String password) {
-        if (encoder == null) throw new IllegalStateException("BCryptPasswordEncoder not initialized!");
+        if (encoder == null) {
+            throw new IllegalStateException("BCryptPasswordEncoder not initialized!");
+        }
 
         String query = "SELECT id, email, password, role, username, name, address, phone, nic FROM Users WHERE email = ?";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -132,7 +140,7 @@ public class UserOperations {
     }
 
     // ✅ Update User
-    public static boolean updateUser(Users user) {
+    public static Users updateUser(Users user) {
         String query = "UPDATE Users SET role = ?, name = ?, address = ?, phone = ?, nic = ? WHERE id = ?";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, user.getRole());
@@ -141,10 +149,15 @@ public class UserOperations {
             stmt.setString(4, user.getPhone());
             stmt.setString(5, user.getNic());
             stmt.setInt(6, user.getId());
-            return stmt.executeUpdate() > 0;
+
+            int rowsUpdated = stmt.executeUpdate();
+            if (rowsUpdated > 0) {
+                // Fetch and return the updated user
+                return getUserById(user.getId()); // ✅ Return the updated user object
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;
+        return null; // ✅ Return null if the update fails
     }
 }

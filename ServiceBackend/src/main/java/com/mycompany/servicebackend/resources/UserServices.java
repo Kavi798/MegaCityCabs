@@ -91,7 +91,7 @@ public class UserServices {
             Users validUser = UserOperations.validateLogin(user.getEmail(), user.getPassword());
 
             if (validUser != null) {
-                return Response.ok("{\"message\": \"Login successful!\", \"id\": " + validUser.getId() + ", \"role\": \"" + validUser.getRole() + "\"}").build();
+                return Response.ok(gson.toJson(validUser)).build(); // Send the full user object
             }
 
             return Response.status(Response.Status.UNAUTHORIZED)
@@ -124,9 +124,9 @@ public class UserServices {
             // ✅ Debug log for checking received data
             System.out.println("Updating User: " + user.getId() + ", Role: " + user.getRole() + ", Name: " + user.getName());
 
-            boolean updated = UserOperations.updateUser(user);
-            if (updated) {
-                return Response.ok("{\"message\": \"User updated successfully\"}").build();
+            Users updatedUser = UserOperations.updateUser(user); // Updated method now returns the user object
+            if (updatedUser != null) {
+                return Response.ok(gson.toJson(updatedUser)).build(); // Return the updated user object
             } else {
                 return Response.status(Response.Status.NOT_FOUND)
                         .entity("{\"message\": \"User not found or update failed\"}")

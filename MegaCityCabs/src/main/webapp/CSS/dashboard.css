@@ -1,5 +1,5 @@
 /* ================================
-   Customer Dashboard - Fixed Design
+   Modern Customer Home Page Design
 =================================== */
 
 /* Global Reset */
@@ -12,10 +12,12 @@
 
 /* Body */
 body {
-    background-color: #f4f7fc;
+    background: linear-gradient(135deg, #f4f7fc, #e0e7ff);
     color: #333;
+    min-height: 100vh;
 }
 
+/* Navbar */
 /* Navbar */
 .navbar {
     background: #2c3e50;
@@ -24,8 +26,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 70px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .logo a {
@@ -47,11 +48,13 @@ body {
     padding: 8px 16px;
     border-radius: 5px;
     font-weight: 500;
+    transition: background 0.3s, transform 0.3s;
 }
 
 .nav-links li a:hover,
 .nav-links li a.active {
     background: #34495e;
+    transform: translateY(-2px);
 }
 
 /* Main Content */
@@ -59,25 +62,217 @@ main {
     margin: 40px auto;
     padding: 30px;
     max-width: 1100px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
 
-/* Section Title */
-.dashboard-section h2 {
-    margin-bottom: 20px;
+/* Welcome Message */
+.welcome-message h1 {
+    font-size: 36px;
     color: #2c3e50;
-    font-size: 26px;
-    text-align: center;
+    margin-bottom: 20px;
 }
 
-/* Section Paragraph */
-.dashboard-section p {
-    text-align: center;
+.welcome-message h1 span {
+    color: #3498db;
+}
+
+.cta-text {
     font-size: 18px;
     color: #7f8c8d;
     margin-bottom: 30px;
 }
 
-/* Form Design */
+/* Call-to-Action Buttons */
+.cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.cta-button {
+    background: #3498db;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+}
+
+.cta-button:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+}
+
+/* ================================
+   Customer Booking History Table 
+================================ */
+
+/* Main Table Container */
+#bookingHistory {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 95%;
+    margin: 30px auto;
+    overflow-x: auto;
+}
+
+/* Table Styling */
+#bookingHistory table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 auto;
+}
+
+/* Table Headers */
+#bookingHistory th {
+    background: #2c3e50;
+    color: white;
+    padding: 12px 15px;
+    font-weight: bold;
+    text-align: left;
+    border-bottom: 2px solid #34495e;
+}
+
+/* Table Rows */
+#bookingHistory td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Alternate Row Color */
+#bookingHistory tbody tr:nth-child(even) {
+    background: #f2f2f2;
+}
+
+/* Hover Effect */
+#bookingHistory tbody tr:hover {
+    background-color: #dfe6e9;
+}
+
+/* Table Title */
+.dashboard-section h2 {
+    margin-bottom: 20px;
+    color: #2c3e50;
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Cancel Button */
+.cancel-btn {
+    background-color: #e74c3c;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-size: 14px;
+}
+
+.cancel-btn:hover {
+    background-color: #c0392b;
+}
+
+
+
+/* Customize SweetAlert Popup */
+.swal2-popup {
+    font-family: 'Poppins', sans-serif;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.swal2-title {
+    color: #2c3e50;
+    font-size: 24px;
+}
+
+.swal2-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.swal2-confirm {
+    background: #27ae60;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.swal2-confirm:hover {
+    background: #2ecc71;
+}
+
+.swal2-cancel {
+    background: #e74c3c;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.swal2-cancel:hover {
+    background: #c0392b;
+}
+
+/* ================================
+   Modern Aesthetic Updates
+=================================== */
+
+/* Main Content - Added white background and shadow for a modern card look */
+main {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Profile Section - Updated text color and spacing */
+.dashboard-section p {
+    color: #333;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+
+/* Edit Profile Button - Added modern hover effect */
+#editProfileButton {
+    background: #3498db;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-top: 20px;
+}
+
+#editProfileButton:hover {
+    background: #2980b9;
+}
+
+/* Form Design - Added modern card look */
 form {
     background: white;
     padding: 30px;
@@ -87,26 +282,8 @@ form {
     margin: 0 auto;
 }
 
-label {
-    display: block;
-    margin-bottom: 10px;
-    font-weight: 600;
-    color: #34495e;
-}
-
-input {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    outline: none;
-}
-
-/* Button */
+/* Button - Added modern hover effect */
 button {
-    width: 100%;
-    padding: 14px;
     background: #27ae60;
     color: white;
     border: none;
@@ -121,52 +298,134 @@ button:hover {
     background: #2ecc71;
 }
 
-/* Profile Section */
-#profileSection p {
-    font-size: 18px;
-    padding: 12px 0;
-    border-bottom: 1px solid #eee;
-}
-
-/* Booking History */
-#bookingHistory {
+/* Book a Ride Form */
+#bookingForm {
     background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    max-width: 800px;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
     margin: 0 auto;
+    text-align: left;
 }
 
-/* Section Visibility */
-.dashboard-section {
-    display: none;
-}
-
-.dashboard-section.active {
+#bookingForm label {
     display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #34495e;
 }
 
-/* Remove Mobile Styles */
-.hamburger {
-    display: none !important;
+#bookingForm input,
+#bookingForm select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.3s;
 }
 
-/* No Scrollbar */
-body {
-    overflow-x: hidden;
+#bookingForm input:focus,
+#bookingForm select:focus {
+    border-color: #3498db;
 }
 
-.cancel-btn {
-    background-color: red;
+#bookingForm button {
+    width: 100%;
+    padding: 14px;
+    background: #3498db;
     color: white;
-    padding: 5px 10px;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
 }
 
-.cancel-btn:hover {
-    background-color: darkred;
+#bookingForm button:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+}
+
+/* Edit Profile Section */
+.edit-profile-section {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 20px auto;
+    text-align: left;
+}
+
+.edit-profile-section h2 {
+    font-size: 24px;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.edit-profile-section label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #34495e;
+    margin-bottom: 8px;
+}
+
+.edit-profile-section input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.edit-profile-section input:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+
+.edit-profile-section .form-group {
+    margin-bottom: 20px;
+}
+
+.edit-profile-section .form-group:last-child {
+    margin-bottom: 0;
+}
+
+.edit-profile-section button {
+    width: 100%;
+    padding: 12px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+}
+
+.edit-profile-section button:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+}
+
+.edit-profile-section button.cancel {
+    background: #e74c3c;
+    margin-top: 10px;
+}
+
+.edit-profile-section button.cancel:hover {
+    background: #c0392b;
 }
 

@@ -22,7 +22,14 @@ public class BookingServices {
     public Response createBooking(String json) {
         Bookings booking = gson.fromJson(json, Bookings.class);
         int bookingId = BookingOperations.createBooking(booking);
-        return Response.status(Response.Status.CREATED).entity("{\"message\": \"Booking created successfully\", \"id\": " + bookingId + "}").build();
+
+        if (bookingId == -1) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("{\"message\": \"No available drivers or vehicles.\"}").build();
+        }
+
+        return Response.status(Response.Status.CREATED)
+                .entity("{\"message\": \"Booking created successfully\", \"id\": " + bookingId + "}").build();
     }
 
     @GET

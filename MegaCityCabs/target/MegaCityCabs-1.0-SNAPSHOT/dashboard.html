@@ -2,14 +2,14 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Customer Dashboard - Mega City Cabs</title>
-        <link rel="stylesheet" href="CSS/dashboard.css"> <!-- ✅ Keep using existing CSS -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Mega City Cabs - Home</title>
+        <link rel="stylesheet" href="CSS/dashboard.css">
     </head>
     <body>
-
         <header>
             <nav class="navbar">
-                <div class="logo"><a href="#">Mega City Cabs</a></div>
+                <div class="logo"><a href="dashboard.html">Mega City Cabs</a></div>
                 <ul class="nav-links">
                     <li><a href="dashboard.html" id="homeLink">Home</a></li>
                     <li><a href="customerBookingRide.html" id="bookRideLink">Book a Ride</a></li>
@@ -20,15 +20,19 @@
             </nav>
         </header>
 
-        <main>
-            <!-- ✅ Home Section -->
-            <section id="homeSection" class="dashboard-section active">
-                <h2>Welcome, <span id="customerName">Customer</span>!</h2>
-                <p>Book a ride, check your history, or update your profile.</p>
-            </section>
+        <main class="dashboard-section active">
+            <div class="welcome-message">
+                <h1>Welcome, <span id="customerName">Kavindu2021</span></h1>
+                <p class="cta-text">Book a ride, check your history, or update your profile.</p>
+                <div class="cta-buttons">
+                    <a href="customerBookingRide.html" class="cta-button">Book a Ride</a>
+                    <a href="customerBookingHistory.html" class="cta-button">Booking History</a>
+                    <a href="customerProfile.html" class="cta-button">Update Profile</a>
+                </div>
+            </div>
         </main>
 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <script src="JS/customer.js"></script> <!-- ✅ Only handles home functionality -->
+        <script src="JS/customer.js"></script>
     </body>
 </html>

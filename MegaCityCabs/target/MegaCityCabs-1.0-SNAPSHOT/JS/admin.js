@@ -20,20 +20,30 @@ document.addEventListener("DOMContentLoaded", () => {
 // =========================
 
 function loadDashboardStats() {
-    // Example fetch call for counts (update endpoints accordingly)
-    fetch('/api/dashboard/stats')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('totalBookings').innerText = data.totalBookings;
-                document.getElementById('availableDrivers').innerText = data.availableDrivers;
-                document.getElementById('availableVehicles').innerText = data.availableVehicles;
-                document.getElementById('totalCustomers').innerText = data.totalCustomers;
-            });
+    fetch('http://localhost:8080/ServiceBackend/api/dashboard/stats')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Dashboard Stats:', data); // Debugging log
+            document.getElementById('totalBookings').innerText = data.totalBookings;
+            document.getElementById('availableDrivers').innerText = data.availableDrivers;
+            document.getElementById('availableVehicles').innerText = data.availableVehicles;
+            document.getElementById('totalCustomers').innerText = data.totalCustomers;
+        })
+//        .catch(error => {
+//            console.error('Error loading dashboard stats:', error);
+//            Swal.fire('Error', 'Failed to load dashboard stats.', 'error');
+//        });
 }
 
 // Call only if element exists
-if (document.getElementById('totalBookings'))
+if (document.getElementById('totalBookings')) {
     loadDashboardStats();
+}
 
 // ======================
 // Manage Users Section

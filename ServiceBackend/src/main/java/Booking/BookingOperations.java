@@ -8,28 +8,47 @@ import java.util.List;
 public class BookingOperations {
 
     public static int createBooking(Bookings booking) {
-        String query = "INSERT INTO Bookings (user_id, pickup_location, dropoff_location, fare, bstatus, pickup_date, vehicle_type) "
-                + "VALUES (?, ?, ?, ?, 'pending', ?, ?)";
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-            double fare = calculateFare(booking.getVehicleType()); // ✅ Calculate fare internally
+        try (Connection conn = DBConnection.getConnection()) {
+            // ✅ First, check if driver and vehicle are available
+            int driverId = getAvailableDriverId();
+            int vehicleId = getAvailableVehicleId(booking.getVehicleType());
 
-            stmt.setInt(1, booking.getUserId());
-            stmt.setString(2, booking.getPickupLocation());
-            stmt.setString(3, booking.getDropoffLocation());
-            stmt.setDouble(4, fare); // ✅ Use calculated fare
-            stmt.setDate(5, Date.valueOf(booking.getPickupDate())); // ✅ Convert String to SQL Date
-            stmt.setString(6, booking.getVehicleType());
+            // ❌ If either driver or vehicle is not available, return -1 (customer will see error)
+            if (driverId == -1 || vehicleId == -1) {
+                return -1;
+            }
 
-            stmt.executeUpdate();
-            ResultSet rs = stmt.getGeneratedKeys();
-            if (rs.next()) {
-                return rs.getInt(1);
+            // ✅ Proceed to create booking as 'pending' without assigning driver/vehicle yet
+            String query = "INSERT INTO Bookings (user_id, pickup_location, dropoff_location, fare, bstatus, pickup_date, vehicle_type) "
+                    + "VALUES (?, ?, ?, ?, 'pending', ?, ?)";
+
+            try (PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+                double fare = calculateFare(booking.getVehicleType()); // ✅ Fare calculated internally
+
+                stmt.setInt(1, booking.getUserId());
+                stmt.setString(2, booking.getPickupLocation());
+                stmt.setString(3, booking.getDropoffLocation());
+                stmt.setDouble(4, fare);
+                stmt.setDate(5, Date.valueOf(booking.getPickupDate()));
+                stmt.setString(6, booking.getVehicleType());
+
+                // ✅ Execute and retrieve generated booking ID
+                int affectedRows = stmt.executeUpdate();
+                if (affectedRows == 0) {
+                    throw new SQLException("Creating booking failed, no rows affected.");
+                }
+
+                try (ResultSet rs = stmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        return rs.getInt(1); // Return generated booking ID
+                    }
+                }
             }
         } catch (SQLException e) {
             System.err.println("Error creating booking: " + e.getMessage());
             e.printStackTrace();
         }
-        return -1;
+        return -1; // Return -1 on failure
     }
 
     public static List<Bookings> getAllBookings() {
@@ -132,11 +151,45 @@ public class BookingOperations {
     }
 
     public static boolean updateBookingStatus(int bookingId, String status) {
-        String query = "UPDATE Bookings SET bstatus = ? WHERE id = ?";
-        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, status);
-            stmt.setInt(2, bookingId);
-            return stmt.executeUpdate() > 0;
+        try (Connection conn = DBConnection.getConnection()) {
+            if (status.equalsIgnoreCase("accepted")) {
+                // Step 1: Find vehicle type for the booking
+                String getBookingQuery = "SELECT vehicle_type FROM Bookings WHERE id = ?";
+                String vehicleType = null;
+                try (PreparedStatement stmt = conn.prepareStatement(getBookingQuery)) {
+                    stmt.setInt(1, bookingId);
+                    ResultSet rs = stmt.executeQuery();
+                    if (rs.next()) {
+                        vehicleType = rs.getString("vehicle_type");
+                    } else {
+                        return false; // Booking not found
+                    }
+                }
+
+                // Step 2: Find available driver and vehicle
+                int driverId = getAvailableDriverId();
+                int vehicleId = getAvailableVehicleId(vehicleType);
+
+                // ✅ Even if not available, admin accepts — driver/vehicle can be added later manually
+                String updateQuery = "UPDATE Bookings SET bstatus = ?, driver_id = ?, vehicle_id = ? WHERE id = ?";
+                try (PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+                    stmt.setString(1, "accepted");
+                    stmt.setObject(2, driverId == -1 ? null : driverId); // NULL if not found
+                    stmt.setObject(3, vehicleId == -1 ? null : vehicleId); // NULL if not found
+                    stmt.setInt(4, bookingId);
+                    return stmt.executeUpdate() > 0;
+                }
+
+            } else {
+                // ✅ For completed or cancelled
+                String query = "UPDATE Bookings SET bstatus = ? WHERE id = ?";
+                try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                    stmt.setString(1, status);
+                    stmt.setInt(2, bookingId);
+                    return stmt.executeUpdate() > 0;
+                }
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -232,5 +285,100 @@ public class BookingOperations {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public static boolean autoAssignDriverAndVehicle(int bookingId, String vehicleType) {
+        String findDriverQuery = "SELECT id FROM Drivers WHERE dstatus = 'available' LIMIT 1";
+        String findVehicleQuery = "SELECT id FROM Vehicles WHERE type = ? AND status = 'available' LIMIT 1";
+        String updateBookingQuery = "UPDATE Bookings SET driver_id = ?, vehicle_id = ?, bstatus = 'accepted' WHERE id = ?";
+        String updateDriverQuery = "UPDATE Drivers SET dstatus = 'busy' WHERE id = ?";
+        String updateVehicleQuery = "UPDATE Vehicles SET status = 'unavailable' WHERE id = ?";
+
+        try (Connection conn = DBConnection.getConnection()) {
+            conn.setAutoCommit(false); // Start Transaction
+
+            Integer driverId = null;
+            Integer vehicleId = null;
+
+            // Step 1: Find available driver
+            try (PreparedStatement driverStmt = conn.prepareStatement(findDriverQuery); ResultSet driverRs = driverStmt.executeQuery()) {
+                if (driverRs.next()) {
+                    driverId = driverRs.getInt("id");
+                }
+            }
+
+            // Step 2: Find available vehicle by type
+            try (PreparedStatement vehicleStmt = conn.prepareStatement(findVehicleQuery)) {
+                vehicleStmt.setString(1, vehicleType);
+                try (ResultSet vehicleRs = vehicleStmt.executeQuery()) {
+                    if (vehicleRs.next()) {
+                        vehicleId = vehicleRs.getInt("id");
+                    }
+                }
+            }
+
+            // Step 3: Assign if both found
+            if (driverId != null && vehicleId != null) {
+                // Update Booking
+                try (PreparedStatement updateBookingStmt = conn.prepareStatement(updateBookingQuery)) {
+                    updateBookingStmt.setInt(1, driverId);
+                    updateBookingStmt.setInt(2, vehicleId);
+                    updateBookingStmt.setInt(3, bookingId);
+                    updateBookingStmt.executeUpdate();
+                }
+
+                // Update Driver status to busy
+                try (PreparedStatement updateDriverStmt = conn.prepareStatement(updateDriverQuery)) {
+                    updateDriverStmt.setInt(1, driverId);
+                    updateDriverStmt.executeUpdate();
+                }
+
+                // Update Vehicle status to unavailable
+                try (PreparedStatement updateVehicleStmt = conn.prepareStatement(updateVehicleQuery)) {
+                    updateVehicleStmt.setInt(1, vehicleId);
+                    updateVehicleStmt.executeUpdate();
+                }
+
+                conn.commit(); // Commit Transaction
+                return true;
+            } else {
+                conn.rollback(); // Rollback if not assigned
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // ✅ Get available driver ID
+    public static int getAvailableDriverId() {
+        String query = "SELECT id FROM Drivers WHERE dstatus = 'available' LIMIT 1";
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("id");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching available driver: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return -1; // No available driver found
+    }
+
+// ✅ Get available vehicle ID based on type
+    public static int getAvailableVehicleId(String vehicleType) {
+        String query = "SELECT id FROM Vehicles WHERE type = ? AND status = 'available' LIMIT 1";
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, vehicleType);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching available vehicle: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return -1; // No available vehicle found
     }
 }

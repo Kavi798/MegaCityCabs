@@ -47,55 +47,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const pickup = document.getElementById("pickup").value;
             const dropoff = document.getElementById("dropoff").value;
-            const pickupDate = document.getElementById("pickupDate").value;
+            const pickupDate = document.getElementById("pickupDate").value; // ✅ Use directly without formatting
             const vehicleType = document.getElementById("vehicleType").value;
 
             const bookingData = {
                 userId: loggedInUser.id,
                 pickupLocation: pickup,
                 dropoffLocation: dropoff,
-                pickupDate: pickupDate,
-                vehicleType: vehicleType,
+                pickupDate: pickupDate, // ✅ Correct format (yyyy-MM-dd)
+                vehicleType: vehicleType
             };
 
-            console.log("Booking Data:", bookingData); // Debugging
+            console.log("Booking Data to send:", bookingData); // ✅ Check in browser console
 
-            // ✅ Step 1: Create booking and get ID
-            fetch(`${API_BASE_URL}/bookings/create`, {
+            // ✅ FINAL FIXED FETCH PART
+            fetch(`${API_BASE_URL}/bookings/create`, {// ✅ Correct
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(bookingData)
             })
-                    .then(response => response.json()) // Parse response JSON
+                    .then(response => response.json())
                     .then(data => {
-                        console.log("Booking Created Response:", data);
-                        if (data.id) {
-                            // ✅ Step 2: Call generate bill API with returned booking ID
-                            fetch(`${API_BASE_URL}/bookings/generate-bill/${data.id}`)
-                                    .then(response => response.json())
-                                    .then(bill => {
-                                        console.log("Generated Bill:", bill);
-                                        // ✅ Step 3: Show bill in SweetAlert
-                                        Swal.fire({
-                                            title: 'Your Ride Bill',
-                                            html: `
-                                    <p><strong>Name:</strong> ${bill.customerName}</p>
-                                    <p><strong>Pickup:</strong> ${bill.pickupLocation}</p>
-                                    <p><strong>Drop-off:</strong> ${bill.dropoffLocation}</p>
-                                    <p><strong>Vehicle Type:</strong> ${vehicleType}</p>
-                                    <p><strong>Total Fare:</strong> Rs. ${bill.totalFare}</p>
-                                `,
-                                            icon: 'info',
-                                            confirmButtonText: 'OK'
-                                        });
-                                        bookingForm.reset(); // ✅ Reset form after showing bill
-                                    })
-                                    .catch(error => {
-                                        console.error("Error fetching bill:", error);
-                                        Swal.fire('Error', 'Failed to generate bill. Please try later.', 'error');
-                                    });
+                        if (data.id && data.id !== -1) {
+                            Swal.fire('Success!', 'Your ride has been booked successfully!', 'success');
+                            bookingForm.reset();
                         } else {
-                            Swal.fire('Error', 'Failed to book ride. Please try again.', 'error');
+                            Swal.fire('No Availability', 'No available drivers or vehicles. Please try later.', 'warning');
                         }
                     })
                     .catch(error => {
@@ -184,5 +161,68 @@ document.addEventListener("DOMContentLoaded", function () {
         profileEmail.textContent = loggedInUser.email;
         profileAddress.textContent = loggedInUser.address || "N/A";
         profilePhone.textContent = loggedInUser.phone || "N/A";
+    }
+
+    // ✅ Handle Edit Profile Button Click
+    const editProfileButton = document.getElementById("editProfileButton");
+    if (editProfileButton) {
+        editProfileButton.addEventListener("click", function () {
+            // Create a form for the SweetAlert popup
+            Swal.fire({
+                title: "Edit Profile",
+                html: `
+                    <form id="updateProfileForm">
+                        <label for="updateName">Name:</label>
+                        <input type="text" id="updateName" value="${loggedInUser.name || ""}" required><br>
+
+                        <label for="updateAddress">Address:</label>
+                        <input type="text" id="updateAddress" value="${loggedInUser.address || ""}" required><br>
+
+                        <label for="updatePhone">Phone:</label>
+                        <input type="text" id="updatePhone" value="${loggedInUser.phone || ""}" required><br>
+                    </form>
+                `,
+                showCancelButton: true,
+                confirmButtonText: "Save Changes",
+                cancelButtonText: "Cancel",
+                focusConfirm: false,
+                preConfirm: () => {
+                    const updatedUser = {
+                        id: loggedInUser.id,
+                        name: document.getElementById("updateName").value,
+                        address: document.getElementById("updateAddress").value,
+                        phone: document.getElementById("updatePhone").value,
+                        role: loggedInUser.role, // Keep the role unchanged
+                        email: loggedInUser.email, // Keep the email unchanged
+                        username: loggedInUser.username, // Keep the username unchanged
+                        nic: loggedInUser.nic // Keep the NIC unchanged
+                    };
+
+                    return fetch(`${API_BASE_URL}/users/${loggedInUser.id}`, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(updatedUser)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.id) { // Check if the response contains the updated user
+                            throw new Error("Failed to update profile.");
+                        }
+                        return data; // Return the updated user object
+                    })
+                    .catch(error => {
+                        Swal.showValidationMessage(`Request failed: ${error.message}`);
+                    });
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Update sessionStorage with the new user data
+                    sessionStorage.setItem("loggedInUser", JSON.stringify(result.value));
+                    Swal.fire("Success", "Profile updated successfully!", "success").then(() => {
+                        window.location.reload(); // Refresh the page to reflect changes
+                    });
+                }
+            });
+        });
     }
 });

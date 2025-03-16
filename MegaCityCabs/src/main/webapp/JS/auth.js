@@ -54,22 +54,39 @@ document.addEventListener("DOMContentLoaded", function () {
                     sessionStorage.setItem("userId", data.id); // Store user ID
                     sessionStorage.setItem("userRole", data.role); // Store user role
 
-                    alert("Login successful! Redirecting...");
-
-                    // ✅ Redirect based on user role
-                    if (data.role === "cus") {
-                        window.location.href = "/dashboard.html"; // Redirect Customers to Dashboard
-                    } else if (data.role === "adm") {
-                        window.location.href = "./admin.html"; // Redirect Admins to Admin Panel
-                    } else {
-                        window.location.href = "index.html"; // Default Redirect (Failsafe)
-                    }
+                    // ✅ Show SweetAlert2 success message
+                    Swal.fire({
+                        icon: "success",
+                        title: "Login Successful!",
+                        text: "Redirecting to your dashboard...",
+                        showConfirmButton: false,
+                        timer: 1500 // Auto-close after 1.5 seconds
+                    }).then(() => {
+                        // ✅ Redirect based on user role
+                        if (data.role === "cus") {
+                            window.location.href = "dashboard.html"; // Relative to current project folder
+                        } else if (data.role === "adm") {
+                            window.location.href = "./admin.html"; // Redirect Admins to Admin Panel
+                        } else {
+                            window.location.href = "index.html"; // Default Redirect (Failsafe)
+                        }
+                    });
                 } else {
-                    alert(data.message || "Invalid email or password!");
+                    // ✅ Show SweetAlert2 error message
+                    Swal.fire({
+                        icon: "error",
+                        title: "Login Failed",
+                        text: data.message || "Invalid email or password!",
+                    });
                 }
             } catch (error) {
                 console.error("Error logging in:", error);
-                alert("An error occurred. Please try again.");
+                // ✅ Show SweetAlert2 error message
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "An error occurred. Please try again.",
+                });
             }
         });
     }
@@ -100,14 +117,32 @@ document.addEventListener("DOMContentLoaded", function () {
                 const data = await response.json();
 
                 if (response.ok) {
-                    alert("Registration successful! Redirecting to login...");
-                    window.location.href = "login.html";
+                    // ✅ Show SweetAlert2 success message
+                    Swal.fire({
+                        icon: "success",
+                        title: "Registration Successful!",
+                        text: "Redirecting to login...",
+                        showConfirmButton: false,
+                        timer: 1500 // Auto-close after 1.5 seconds
+                    }).then(() => {
+                        window.location.href = "login.html";
+                    });
                 } else {
-                    alert(data.message || "Registration failed!");
+                    // ✅ Show SweetAlert2 error message
+                    Swal.fire({
+                        icon: "error",
+                        title: "Registration Failed",
+                        text: data.message || "Registration failed!",
+                    });
                 }
             } catch (error) {
                 console.error("Error registering user:", error);
-                alert("An error occurred. Please try again.");
+                // ✅ Show SweetAlert2 error message
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "An error occurred. Please try again.",
+                });
             }
         });
     }
@@ -115,9 +150,28 @@ document.addEventListener("DOMContentLoaded", function () {
     // 🔹 Handle Logout
     if (logoutButton) {
         logoutButton.addEventListener("click", function () {
-            sessionStorage.clear(); // ✅ Clear session storage
-            alert("Logged out successfully!");
-            window.location.href = "login.html";
+            // ✅ Show SweetAlert2 confirmation dialog
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You will be logged out!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, Logout",
+                cancelButtonText: "Cancel",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    sessionStorage.clear(); // ✅ Clear session storage
+                    Swal.fire({
+                        icon: "success",
+                        title: "Logged Out!",
+                        text: "You have been successfully logged out.",
+                        showConfirmButton: false,
+                        timer: 1500 // Auto-close after 1.5 seconds
+                    }).then(() => {
+                        window.location.href = "login.html";
+                    });
+                }
+            });
         });
     }
 });
